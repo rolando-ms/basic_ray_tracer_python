@@ -1,6 +1,8 @@
+from __future__ import annotations
 import numpy as np
 
-class vec3:
+
+class Vec3:
     def __init__(self, vector: np.array = np.zeros(3)):
         self.e = vector
         self.x = self.e[0]
@@ -10,12 +12,29 @@ class vec3:
     def __str__(self):
         return 'e[0] = {0}, e[1] = {1}, e[2] = {2}'.format(self.e[0], self.e[1], self.e[2])
 
-    def length(self):
-        return np.sqrt(self.length_squared())
+    def __add__(self, other: Vec3) -> Vec3:
+        # return Vec3(np.array([self.e[0] + other.e[0], self.e[1] + other.e[1], self.e[2] + other.e[2]]))
+        return Vec3(self.e + other.e)
 
-    def length_squared(self):
-        return np.sum(self.e * self.e)
+    def __sub__(self, other: Vec3) -> Vec3:
+        # return Vec3(np.array([self.e[0] - other.e[0], self.e[1] - other.e[1], self.e[2] - other.e[2]]))
+        return Vec3(self.e - other.e)
 
-    def unit_vector(self):
-        return self.e / self.length()
+    def __mul__(self, scalar: float) -> Vec3:
+        return Vec3(scalar * self.e)
+
+    def __rmul__(self, scalar: float) -> Vec3:
+        return Vec3(self.e * scalar)
+
+    def __truediv__(self, scalar: float) -> Vec3:
+        return Vec3(self.e / scalar)
+
+    def length(self) -> Vec3:
+        return Vec3(np.sqrt(self.length_squared()))
+
+    def length_squared(self) -> Vec3:
+        return Vec3(np.sum(self.e * self.e))
+
+    def unit_vector(self) -> Vec3:
+        return Vec3(self.e / np.sqrt(np.sum(self.e * self.e)))
 
