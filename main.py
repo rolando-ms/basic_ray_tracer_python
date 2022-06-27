@@ -10,14 +10,18 @@ point3 = Vec3
 
 def hit_sphere(center: point3, radius: float, r: Ray):
     oc = r.origin - center
-    a = vec3_dot(r.direction, r.direction)
-    b = 2.0 * vec3_dot(oc, r.direction)
-    c = -1*(radius * radius) + vec3_dot(oc, oc)
-    discriminant = b*b - 4.0*a*c
+    a = r.direction.length_squared()
+    half_b = vec3_dot(oc, r.direction)
+    c = -1*(radius*radius) + oc.length_squared()
+    discriminant = half_b * half_b - a*c
+    # a = vec3_dot(r.direction, r.direction)
+    # b = 2.0 * vec3_dot(oc, r.direction)
+    # c = -1*(radius * radius) + vec3_dot(oc, oc)
+    # discriminant = b*b - 4.0*a*c
     if discriminant < 0:
         return -1.0
     else:
-        return (-b - np.sqrt(discriminant)) / (2.0*a)
+        return (-half_b - np.sqrt(discriminant)) / a
 
 
 def ray_color(r: Ray) -> color:
