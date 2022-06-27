@@ -1,12 +1,26 @@
 from colorClass import write_color
 from rayClass import Ray
+from vec3Class import vec3_dot
 from vec3Class import Vec3
 import numpy as np
 
 color = Vec3
 point3 = Vec3
 
+
+def hit_sphere(center: point3, radius: float, r: Ray):
+    oc = r.origin - center
+    a = vec3_dot(r.direction, r.direction)
+    b = 2.0 * vec3_dot(oc, r.direction)
+    c = -1*(radius * radius) + vec3_dot(oc, oc)
+    discriminant = b*b - 4.0*a*c
+    # print(discriminant)
+    return discriminant > 0
+
+
 def ray_color(r: Ray) -> color:
+    if hit_sphere(point3(np.array([0.0, 0.0, 1.0])), 0.5, r):
+        return color(np.array([1, 0, 0]))
     unit_direction = r.direction.unit_vector()
     t = 0.5 * (unit_direction.y + 1.0)
     return (1.0-t) * color(np.array([1.0, 1.0, 1.0])) + t*color(np.array([0.5, 0.7, 1.0]))
@@ -16,7 +30,7 @@ def main():
     # Image
     aspect_ratio = 16.0/9
     img_width = 400
-    img_height = int(img_width/ aspect_ratio)
+    img_height = int(img_width / aspect_ratio)
 
     # Camera
     viewport_height = 2.0
