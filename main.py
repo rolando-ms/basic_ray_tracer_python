@@ -14,13 +14,17 @@ def hit_sphere(center: point3, radius: float, r: Ray):
     b = 2.0 * vec3_dot(oc, r.direction)
     c = -1*(radius * radius) + vec3_dot(oc, oc)
     discriminant = b*b - 4.0*a*c
-    # print(discriminant)
-    return discriminant > 0
+    if discriminant < 0:
+        return -1.0
+    else:
+        return (-b - np.sqrt(discriminant)) / (2.0*a)
 
 
 def ray_color(r: Ray) -> color:
-    if hit_sphere(point3(np.array([0.0, 0.0, 1.0])), 0.5, r):
-        return color(np.array([1, 0, 0]))
+    t = hit_sphere(point3(np.array([0.0, 0.0, -1.0])), 0.5, r)
+    if t > 0.0:
+        N = (r.at(t) - Vec3(np.array([0,0,-1]))).unit_vector()
+        return 0.5 * color(np.array([N.x+1, N.y+1, N.z+1]))
     unit_direction = r.direction.unit_vector()
     t = 0.5 * (unit_direction.y + 1.0)
     return (1.0-t) * color(np.array([1.0, 1.0, 1.0])) + t*color(np.array([0.5, 0.7, 1.0]))
