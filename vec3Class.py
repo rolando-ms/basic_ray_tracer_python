@@ -20,6 +20,9 @@ class Vec3:
         # return Vec3(np.array([self.e[0] - other.e[0], self.e[1] - other.e[1], self.e[2] - other.e[2]]))
         return Vec3(self.e - other.e)
 
+    def __rsub__(self, scalar: float) -> Vec3:
+        return Vec3(self.e - scalar)
+
     def __mul__(self, scalar: float) -> Vec3:
         return Vec3(scalar * self.e)
 
@@ -38,3 +41,10 @@ class Vec3:
     def unit_vector(self) -> Vec3:
         return Vec3(self.e / np.sqrt(np.sum(self.e * self.e)))
 
+
+def vec3_dot(v1: Vec3, v2: Vec3) -> np.ndarray:
+    return np.dot(v1.e, v2.e)
+
+
+def vec3_cross(v1: Vec3, v2: Vec3) -> Vec3:
+    return Vec3(np.cross(v1.e, v2.e))
