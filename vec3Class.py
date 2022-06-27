@@ -32,11 +32,11 @@ class Vec3:
     def __truediv__(self, scalar: float) -> Vec3:
         return Vec3(self.e / scalar)
 
-    def length(self) -> Vec3:
-        return Vec3(np.sqrt(self.length_squared()))
+    def length(self) -> float:
+        return np.sqrt(self.length_squared())
 
-    def length_squared(self) -> Vec3:
-        return Vec3(np.sum(self.e * self.e))
+    def length_squared(self) -> np.ndarray:
+        return np.sum(self.e * self.e)
 
     def unit_vector(self) -> Vec3:
         return Vec3(self.e / np.sqrt(np.sum(self.e * self.e)))
