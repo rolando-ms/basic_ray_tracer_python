@@ -57,3 +57,19 @@ def vec3_dot(v1: Vec3, v2: Vec3) -> np.ndarray:
 
 def vec3_cross(v1: Vec3, v2: Vec3) -> Vec3:
     return Vec3(np.cross(v1.e, v2.e))
+
+
+def get_random_vec() -> Vec3:
+    return Vec3(np.array([np.random.rand(), np.random.rand(), np.random.rand()]))
+
+
+def get_random_vec_in_range(min: float, max: float) -> Vec3:
+    return Vec3(np.array([np.random.uniform(min, max), np.random.uniform(min, max), np.random.uniform(min, max)]))
+
+
+def random_in_unit_sphere() -> Vec3:
+    while True:
+        p = get_random_vec_in_range(-1, 1)
+        if p.length_squared() >= 1:
+            continue
+        return p
