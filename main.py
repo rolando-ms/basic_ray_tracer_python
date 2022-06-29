@@ -1,34 +1,15 @@
-from colorClass import write_color
-from rayClass import Ray
-from vec3Class import vec3_dot
-from vec3Class import Vec3
 import numpy as np
 
-color = Vec3
-point3 = Vec3
+from colorClass import write_color
+from CommonUtilities import *
+from sphereClass import Sphere
 
 
-def hit_sphere(center: point3, radius: float, r: Ray):
-    oc = r.origin - center
-    a = r.direction.length_squared()
-    half_b = vec3_dot(oc, r.direction)
-    c = -1*(radius*radius) + oc.length_squared()
-    discriminant = half_b * half_b - a*c
-    # a = vec3_dot(r.direction, r.direction)
-    # b = 2.0 * vec3_dot(oc, r.direction)
-    # c = -1*(radius * radius) + vec3_dot(oc, oc)
-    # discriminant = b*b - 4.0*a*c
-    if discriminant < 0:
-        return -1.0
-    else:
-        return (-half_b - np.sqrt(discriminant)) / a
-
-
-def ray_color(r: Ray) -> color:
-    t = hit_sphere(point3(np.array([0.0, 0.0, -1.0])), 0.5, r)
-    if t > 0.0:
-        N = (r.at(t) - Vec3(np.array([0,0,-1]))).unit_vector()
-        return 0.5 * color(np.array([N.x+1, N.y+1, N.z+1]))
+def ray_color(r: Ray, world: Hittable) -> color:
+    rec = HitRecord()
+    world_hit, rec = world.hit(r, 0, np.Infinity, rec)
+    if world_hit:
+        return 0.5*(rec.normal + color(np.array([1, 1, 1])))
     unit_direction = r.direction.unit_vector()
     t = 0.5 * (unit_direction.y + 1.0)
     return (1.0-t) * color(np.array([1.0, 1.0, 1.0])) + t*color(np.array([0.5, 0.7, 1.0]))
@@ -39,6 +20,11 @@ def main():
     aspect_ratio = 16.0/9
     img_width = 400
     img_height = int(img_width / aspect_ratio)
+
+    # World
+    world = HittableList()
+    world.add(Sphere(point3(np.array([0, 0, -1])), 0.5))
+    world.add(Sphere(point3(np.array([0, -100.5, -1])), 100))
 
     # Camera
     viewport_height = 2.0
@@ -59,7 +45,7 @@ def main():
                 u = i / (img_width - 1)
                 v = j / (img_height - 1)
                 r = Ray(origin, lower_left_corner + u*horizontal + v*vertical - origin)
-                pixel_color = ray_color(r)
+                pixel_color = ray_color(r, world)
                 img.write(write_color(pixel_color))
 
 
