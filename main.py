@@ -3,6 +3,7 @@ import numpy as np
 from colorClass import write_color
 from CommonUtilities import *
 from sphereClass import Sphere
+from CameraClass import Camera
 
 
 def ray_color(r: Ray, world: Hittable) -> color:
@@ -18,8 +19,9 @@ def ray_color(r: Ray, world: Hittable) -> color:
 def main():
     # Image
     aspect_ratio = 16.0/9
-    img_width = 400
+    img_width = 200
     img_height = int(img_width / aspect_ratio)
+    samples_per_pixel = 10
 
     # World
     world = HittableList()
@@ -27,14 +29,7 @@ def main():
     world.add(Sphere(point3(np.array([0, -100.5, -1])), 100))
 
     # Camera
-    viewport_height = 2.0
-    viewport_width = aspect_ratio * viewport_height
-    focal_length = 1.0
-
-    origin = point3(np.zeros(3))
-    horizontal = Vec3(np.array([viewport_width, 0, 0]))
-    vertical = Vec3(np.array([0, viewport_height, 0]))
-    lower_left_corner = origin - horizontal/2 - vertical/2 - Vec3(np.array([0, 0, focal_length]))
+    cam = Camera()
 
     with open('image.ppm', 'w') as img:
         img.write('P3\n')
@@ -42,11 +37,13 @@ def main():
         for j in range(img_height-1, 0, -1):
             print('\rRows remaining: ' + str(j))
             for i in range(0, img_width):
-                u = i / (img_width - 1)
-                v = j / (img_height - 1)
-                r = Ray(origin, lower_left_corner + u*horizontal + v*vertical - origin)
-                pixel_color = ray_color(r, world)
-                img.write(write_color(pixel_color))
+                pixel_color = color()
+                for s in range(samples_per_pixel):
+                    u = (i + np.random.rand()) / (img_width - 1)
+                    v = (j + np.random.rand()) / (img_height - 1)
+                    r = cam.get_ray(u, v)
+                    pixel_color += ray_color(r, world)
+                img.write(write_color(pixel_color, samples_per_pixel))
 
 
 if __name__ == '__main__':
