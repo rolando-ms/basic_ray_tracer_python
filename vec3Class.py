@@ -73,3 +73,7 @@ def random_in_unit_sphere() -> Vec3:
         if p.length_squared() >= 1:
             continue
         return p
+
+
+def random_unit_vector():
+    return random_in_unit_sphere().unit_vector()
