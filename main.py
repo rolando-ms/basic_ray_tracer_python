@@ -12,7 +12,7 @@ def ray_color(r: Ray, world: Hittable, depth: int) -> color:
     if depth <= 0:
         return color()
 
-    world_hit, rec = world.hit(r, 0, np.Infinity, rec)
+    world_hit, rec = world.hit(r, 0.001, np.Infinity, rec)
     if world_hit:
         target = rec.p + rec.normal + random_in_unit_sphere()
         return 0.5 * ray_color(Ray(rec.p, target - rec.p), world, depth-1)
