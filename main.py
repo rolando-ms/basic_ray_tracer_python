@@ -6,11 +6,17 @@ from sphereClass import Sphere
 from CameraClass import Camera
 
 
-def ray_color(r: Ray, world: Hittable) -> color:
+def ray_color(r: Ray, world: Hittable, depth: int) -> color:
     rec = HitRecord()
+
+    if depth <= 0:
+        return color()
+
     world_hit, rec = world.hit(r, 0, np.Infinity, rec)
     if world_hit:
-        return 0.5*(rec.normal + color(np.array([1, 1, 1])))
+        target = rec.p + rec.normal + random_in_unit_sphere()
+        return 0.5 * ray_color(Ray(rec.p, target - rec.p), world, depth-1)
+        # return 0.5*(rec.normal + color(np.array([1, 1, 1])))
     unit_direction = r.direction.unit_vector()
     t = 0.5 * (unit_direction.y + 1.0)
     return (1.0-t) * color(np.array([1.0, 1.0, 1.0])) + t*color(np.array([0.5, 0.7, 1.0]))
@@ -22,6 +28,7 @@ def main():
     img_width = 200
     img_height = int(img_width / aspect_ratio)
     samples_per_pixel = 10
+    max_depth = 5
 
     # World
     world = HittableList()
@@ -42,7 +49,7 @@ def main():
                     u = (i + np.random.rand()) / (img_width - 1)
                     v = (j + np.random.rand()) / (img_height - 1)
                     r = cam.get_ray(u, v)
-                    pixel_color += ray_color(r, world)
+                    pixel_color += ray_color(r, world, max_depth)
                 img.write(write_color(pixel_color, samples_per_pixel))
 
 
