@@ -14,7 +14,7 @@ def ray_color(r: Ray, world: Hittable, depth: int) -> color:
 
     world_hit, rec = world.hit(r, 0.001, np.Infinity, rec)
     if world_hit:
-        target = rec.p + rec.normal + random_in_unit_sphere()
+        target = rec.p + rec.normal + random_unit_vector()
         return 0.5 * ray_color(Ray(rec.p, target - rec.p), world, depth-1)
         # return 0.5*(rec.normal + color(np.array([1, 1, 1])))
     unit_direction = r.direction.unit_vector()
