@@ -85,3 +85,10 @@ def random_unit_vector() -> Vec3:
 
 def vec3_reflect(v: Vec3, n: Vec3) -> Vec3:
     return v - 2*vec3_dot(v, n)*n
+
+
+def vec3_refract(uv: Vec3, n: Vec3, etai_over_etat: float) -> Vec3:
+    cos_theta = np.minimum(vec3_dot(-1*uv, n), 1.0)
+    r_out_perp = etai_over_etat * (uv + cos_theta*n)
+    r_out_parallel = (-1*np.sqrt(np.abs(1.0 - r_out_perp.length_squared()))) * n
+    return r_out_perp + r_out_parallel
