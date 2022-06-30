@@ -63,8 +63,18 @@ class Dielectric(Material):
             refraction_ratio = 1.0 / self.index_of_refraction
 
         unit_direction = r_in.direction.unit_vector()
-        refracted = vec3_refract(unit_direction, rec.normal, refraction_ratio)
 
-        scattered = Ray(rec.p, refracted)
+        cos_theta = np.minimum(vec3_dot(-1.0*unit_direction, rec.normal), 1.0)
+        sin_theta = np.sqrt(1.0 - cos_theta*cos_theta)
+
+        cannot_refract = refraction_ratio * sin_theta > 1.0
+
+        direction = Vec3()
+        if cannot_refract:
+            direction = vec3_reflect(unit_direction, rec.normal)
+        else:
+            direction = vec3_refract(unit_direction, rec.normal, refraction_ratio)
+
+        scattered = Ray(rec.p, direction)
 
         return [True, attenuation, scattered]

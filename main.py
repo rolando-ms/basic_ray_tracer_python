@@ -40,7 +40,7 @@ def main():
     world = HittableList()
 
     material_ground = Lambertian(color(np.array([0.8, 0.8, 0.0])))
-    material_center = Dielectric(1.5)
+    material_center = Lambertian(color(np.array([0.1, 0.2, 0.5])))
     material_left = Dielectric(1.5)
     material_right = Metal(color(np.array([0.8, 0.6, 0.2])), 1.0)
 
