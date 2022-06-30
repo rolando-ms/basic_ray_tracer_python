@@ -79,6 +79,14 @@ def random_in_unit_sphere() -> Vec3:
         return p
 
 
+def random_in_unit_disk():
+    while True:
+        p = Vec3(np.array([np.random.uniform(-1, 1), np.random.uniform(-1, 1), 0.0]))
+        if p.length_squared() >= 1.0:
+            continue
+        return p
+
+
 def random_unit_vector() -> Vec3:
     return random_in_unit_sphere().unit_vector()
 
