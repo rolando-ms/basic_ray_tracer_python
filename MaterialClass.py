@@ -40,11 +40,12 @@ class Lambertian(Material):
 
 
 class Metal(Material):
-    def __init__(self, albedo: color = color()):
+    def __init__(self, albedo: color = color(), fuzz: float = 1.0):
         self.albedo = albedo
+        self.fuzz = np.clip(fuzz, 0.0, 1.0)
 
     def scatter(self, r_in: Ray, rec: HitRecord, attenuation: color, scattered: Ray) -> list[bool, float, Ray]:
         reflected = vec3_reflect(r_in.direction.unit_vector(), rec.normal)
-        scattered = Ray(rec.p, reflected)
+        scattered = Ray(rec.p, reflected + self.fuzz*random_in_unit_sphere())
         attenuation = self.albedo
         return [vec3_dot(scattered.direction, rec.normal) > 0, attenuation, scattered]
