@@ -1,11 +1,13 @@
 
 from CommonUtilities import *
+from MaterialClass import Material
 
 
 class Sphere(Hittable):
-    def __init__(self, center: point3 = point3(), radius: float = 0.0):
+    def __init__(self, center: point3 = point3(), radius: float = 0.0, material: Material = Material()):
         self.center = center
         self.radius = radius
+        self.material = material
 
     def hit(self, r: Ray, t_min: float, t_max: float, rec: HitRecord) -> list[bool, HitRecord]:
         oc = r.origin - self.center
@@ -26,5 +28,6 @@ class Sphere(Hittable):
         rec.p = r.at(rec.t)
         outward_normal = (rec.p - self.center) / self.radius
         rec.set_face_normal(r, outward_normal)
+        rec.hit_material = self.material
 
         return [True, rec]
