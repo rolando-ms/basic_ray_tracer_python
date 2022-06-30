@@ -2,7 +2,6 @@
 
 # Folders
 /[Tt]ests/
-/python_scripts_lab/
 
 #Intellij files
 *.idea
