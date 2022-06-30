@@ -29,41 +29,78 @@ def ray_color(r: Ray, world: Hittable, depth: int) -> color:
     return (1.0-t) * color(np.array([1.0, 1.0, 1.0])) + t*color(np.array([0.5, 0.7, 1.0]))
 
 
+def random_scene() -> HittableList:
+    world = HittableList()
+
+    ground_material = Lambertian(color(np.array([0.5, 0.5, 0.5])))
+    world.add(Sphere(point3(np.array([0, -1000, 0])), 1000, ground_material))
+
+    for a in range(-11, 11):
+        for b in range(-11, 11):
+            choose_mat = np.random.rand()
+            center = point3(np.array([a + 0.9 * np.random.rand(), 0.2, b + 0.9 * np.random.rand()]))
+
+            if (center - point3(np.array([4, 0.2, 0]))).length() > 0.9:
+                if choose_mat < 0.8:
+                    # Diffuse
+                    albedo = get_random_vec() * get_random_vec()
+                    sphere_material = Lambertian(albedo)
+                    world.add(Sphere(center, 0.2, sphere_material))
+                elif choose_mat < 0.95:
+                    # Metal
+                    albedo = get_random_vec_in_range(0.5, 1)
+                    fuzz = np.random.uniform(0, 0.5)
+                    sphere_material = Metal(albedo, fuzz)
+                    world.add(Sphere(center, 0.2, sphere_material))
+                else:
+                    # Glass
+                    sphere_material = Dielectric(1.5)
+                    world.add(Sphere(center, 0.2, sphere_material))
+
+    material1 = Dielectric(1.5)
+    world.add(Sphere(point3(np.array([0, 1, 0])), 1.0, material1))
+
+    material2 = Lambertian(color(np.array([0.4, 0.2, 0.1])))
+    world.add(Sphere(point3(np.array([-4, 1, 0])), 1.0, material2))
+
+    material3 = Metal(color(np.array([0.7, 0.6, 0.5])), 0.0)
+    world.add(Sphere(point3(np.array([4, 1, 0])), 1.0, material3))
+
+    return world
+
+
+
 def main():
     # Image
-    aspect_ratio = 16.0/9
-    img_width = 200
+    aspect_ratio = 3.0/2.0
+    img_width = 300
     img_height = int(img_width / aspect_ratio)
-    samples_per_pixel = 5
-    max_depth = 10
+    samples_per_pixel = 4
+    max_depth = 30
 
     # World
-    world = HittableList()
-    # R = np.cos(np.pi/4)
+    world = random_scene()
+
+    # world = HittableList()
     #
-    # material_left = Lambertian(color(np.array([0.0, 0.0, 1.0])))
-    # material_right = Lambertian(color(np.array([1.0, 0.0, 0.0])))
-    # world.add(Sphere(point3(np.array([-R, 0.0, -1.0])), R, material_left))
-    # world.add(Sphere(point3(np.array([R, 0.0, -1.0])), R, material_right))
-
-    material_ground = Lambertian(color(np.array([0.8, 0.8, 0.0])))
-    material_center = Lambertian(color(np.array([0.1, 0.2, 0.5])))
-    material_left = Dielectric(1.5)
-    material_right = Metal(color(np.array([0.8, 0.6, 0.2])), 0.0)
-
-    world.add(Sphere(point3(np.array([0.0, -100.5, -1.0])), 100.0, material_ground))
-    world.add(Sphere(point3(np.array([0.0, 0.0, -1.0])), 0.5, material_center))
-    world.add(Sphere(point3(np.array([-1.0, 0.0, -1.0])), 0.5, material_left))
-    world.add(Sphere(point3(np.array([-1.0, 0.0, -1.0])), -0.45, material_left))
-    world.add(Sphere(point3(np.array([1.0, 0.0, -1.0])), 0.5, material_right))
+    # material_ground = Lambertian(color(np.array([0.8, 0.8, 0.0])))
+    # material_center = Lambertian(color(np.array([0.1, 0.2, 0.5])))
+    # material_left = Dielectric(1.5)
+    # material_right = Metal(color(np.array([0.8, 0.6, 0.2])), 0.0)
+    #
+    # world.add(Sphere(point3(np.array([0.0, -100.5, -1.0])), 100.0, material_ground))
+    # world.add(Sphere(point3(np.array([0.0, 0.0, -1.0])), 0.5, material_center))
+    # world.add(Sphere(point3(np.array([-1.0, 0.0, -1.0])), 0.5, material_left))
+    # world.add(Sphere(point3(np.array([-1.0, 0.0, -1.0])), -0.45, material_left))
+    # world.add(Sphere(point3(np.array([1.0, 0.0, -1.0])), 0.5, material_right))
 
     # Camera
-    look_from = point3(np.array([-2, 2, 1]))
-    look_at = point3(np.array([0, 0, -1]))
+    look_from = point3(np.array([13, 2, 3]))
+    look_at = point3(np.array([0, 0, 0]))
     vup = Vec3(np.array([0, 1, 0]))
-    dist_to_focus = (look_from - look_at).length()
-    aperture = 2.0
-    cam = Camera(look_from, look_at, vup, 30.0, aspect_ratio, aperture, dist_to_focus)
+    dist_to_focus = 10.0
+    aperture = 0.1
+    cam = Camera(look_from, look_at, vup, 20.0, aspect_ratio, aperture, dist_to_focus)
 
     with open('image.ppm', 'w') as img:
         img.write('P3\n')
