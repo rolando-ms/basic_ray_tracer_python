@@ -1,9 +1,10 @@
-import numpy as np
 
-from colorClass import write_color
 from CommonUtilities import *
+from colorClass import write_color
 from sphereClass import Sphere
 from CameraClass import Camera
+from MaterialClass import Lambertian
+from MaterialClass import Metal
 
 
 def ray_color(r: Ray, world: Hittable, depth: int) -> color:
@@ -14,9 +15,13 @@ def ray_color(r: Ray, world: Hittable, depth: int) -> color:
 
     world_hit, rec = world.hit(r, 0.001, np.Infinity, rec)
     if world_hit:
-        target = rec.p + rec.normal + random_unit_vector()
-        return 0.5 * ray_color(Ray(rec.p, target - rec.p), world, depth-1)
-        # return 0.5*(rec.normal + color(np.array([1, 1, 1])))
+        scattered = Ray()
+        attenuation = color()
+        ray_scattered, attenuation, scattered = rec.hit_material.scatter(r, rec, attenuation, scattered)
+        if ray_scattered:
+            return attenuation * ray_color(scattered, world, depth-1)
+        return color()
+
     unit_direction = r.direction.unit_vector()
     t = 0.5 * (unit_direction.y + 1.0)
     return (1.0-t) * color(np.array([1.0, 1.0, 1.0])) + t*color(np.array([0.5, 0.7, 1.0]))
@@ -32,8 +37,16 @@ def main():
 
     # World
     world = HittableList()
-    world.add(Sphere(point3(np.array([0, 0, -1])), 0.5))
-    world.add(Sphere(point3(np.array([0, -100.5, -1])), 100))
+
+    material_ground = Lambertian(color(np.array([0.8, 0.8, 0.0])))
+    material_center = Lambertian(color(np.array([0.7, 0.3, 0.3])))
+    material_left = Metal(color(np.array([0.8, 0.8, 0.8])))
+    material_right = Metal(color(np.array([0.8, 0.6, 0.2])))
+
+    world.add(Sphere(point3(np.array([0.0, -100.5, -1.0])), 100.0, material_ground))
+    world.add(Sphere(point3(np.array([0.0, 0.0, -1.0])), 0.5, material_center))
+    world.add(Sphere(point3(np.array([-1.0, 0.0, -1.0])), 0.5, material_left))
+    world.add(Sphere(point3(np.array([1.0, 0.0, -1.0])), 0.5, material_right))
 
     # Camera
     cam = Camera()

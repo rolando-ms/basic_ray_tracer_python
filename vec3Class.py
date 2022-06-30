@@ -23,11 +23,11 @@ class Vec3:
     def __rsub__(self, scalar: float) -> Vec3:
         return Vec3(self.e - scalar)
 
-    def __mul__(self, scalar: float) -> Vec3:
+    def __rmul__(self, scalar: float) -> Vec3:
         return Vec3(scalar * self.e)
 
-    def __rmul__(self, scalar: float) -> Vec3:
-        return Vec3(self.e * scalar)
+    def __mul__(self, other: Vec3) -> Vec3:
+        return Vec3(self.e * other.e)
 
     def __truediv__(self, scalar: float) -> Vec3:
         return Vec3(self.e / scalar)
@@ -49,6 +49,10 @@ class Vec3:
 
     def unit_vector(self) -> Vec3:
         return Vec3(self.e / np.sqrt(np.sum(self.e * self.e)))
+
+    def near_zero(self):
+        s = 1e-8
+        return np.abs(self.e[0]) < s and np.abs(self.e[1]) < s and np.abs(self.e[2]) < s
 
 
 def vec3_dot(v1: Vec3, v2: Vec3) -> np.ndarray:
@@ -75,5 +79,9 @@ def random_in_unit_sphere() -> Vec3:
         return p
 
 
-def random_unit_vector():
+def random_unit_vector() -> Vec3:
     return random_in_unit_sphere().unit_vector()
+
+
+def vec3_reflect(v: Vec3, n: Vec3) -> Vec3:
+    return v - 2*vec3_dot(v, n)*n
