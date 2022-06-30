@@ -5,6 +5,7 @@ from sphereClass import Sphere
 from CameraClass import Camera
 from MaterialClass import Lambertian
 from MaterialClass import Metal
+from MaterialClass import Dielectric
 
 
 def ray_color(r: Ray, world: Hittable, depth: int) -> color:
@@ -39,8 +40,8 @@ def main():
     world = HittableList()
 
     material_ground = Lambertian(color(np.array([0.8, 0.8, 0.0])))
-    material_center = Lambertian(color(np.array([0.7, 0.3, 0.3])))
-    material_left = Metal(color(np.array([0.8, 0.8, 0.8])), 0.3)
+    material_center = Dielectric(1.5)
+    material_left = Dielectric(1.5)
     material_right = Metal(color(np.array([0.8, 0.6, 0.2])), 1.0)
 
     world.add(Sphere(point3(np.array([0.0, -100.5, -1.0])), 100.0, material_ground))
