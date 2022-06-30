@@ -3,17 +3,21 @@ from CommonUtilities import *
 
 
 class Camera:
-    def __init__(self):
-        self.aspect_ratio = 16.0 / 9.0
-        self.viewport_height = 2.0
+    def __init__(self, look_from: point3, look_at: point3, vup: Vec3, vfov: float, aspect_ratio: float):
+        self.aspect_ratio = aspect_ratio
+        theta = np.deg2rad(vfov)
+        h = np.tan(theta/2)
+        self.viewport_height = 2.0 * h
         self. viewport_width = self.aspect_ratio * self.viewport_height
-        self.focal_length = 1.0
 
-        self.origin = point3()
-        self.horizontal = Vec3(np.array([self.viewport_width, 0.0, 0.0]))
-        self.vertical = Vec3(np.array([0.0, self.viewport_height, 0.0]))
-        self.lower_left_corner = self.origin - self.horizontal/2 - self.vertical/2 - \
-                                 Vec3(np.array([0, 0, self.focal_length]))
+        w = (look_from - look_at).unit_vector()
+        u = vec3_cross(vup, w)
+        v = vec3_cross(w, u)
 
-    def get_ray(self, u: float, v: float) -> Ray:
-        return Ray(self.origin, self.lower_left_corner + u*self.horizontal + v*self.vertical - self.origin)
+        self.origin = look_from
+        self.horizontal = self.viewport_width * u
+        self.vertical = self.viewport_height * v
+        self.lower_left_corner = self.origin - self.horizontal / 2 - self.vertical / 2 - w
+
+    def get_ray(self, s: float, t: float) -> Ray:
+        return Ray(self.origin, self.lower_left_corner + s*self.horizontal + t*self.vertical - self.origin)

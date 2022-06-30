@@ -1,3 +1,4 @@
+import numpy as np
 
 from CommonUtilities import *
 from colorClass import write_color
@@ -38,20 +39,26 @@ def main():
 
     # World
     world = HittableList()
+    # R = np.cos(np.pi/4)
+    #
+    # material_left = Lambertian(color(np.array([0.0, 0.0, 1.0])))
+    # material_right = Lambertian(color(np.array([1.0, 0.0, 0.0])))
+    # world.add(Sphere(point3(np.array([-R, 0.0, -1.0])), R, material_left))
+    # world.add(Sphere(point3(np.array([R, 0.0, -1.0])), R, material_right))
 
     material_ground = Lambertian(color(np.array([0.8, 0.8, 0.0])))
     material_center = Lambertian(color(np.array([0.1, 0.2, 0.5])))
     material_left = Dielectric(1.5)
-    material_right = Metal(color(np.array([0.8, 0.6, 0.2])), 1.0)
+    material_right = Metal(color(np.array([0.8, 0.6, 0.2])), 0.0)
 
     world.add(Sphere(point3(np.array([0.0, -100.5, -1.0])), 100.0, material_ground))
     world.add(Sphere(point3(np.array([0.0, 0.0, -1.0])), 0.5, material_center))
     world.add(Sphere(point3(np.array([-1.0, 0.0, -1.0])), 0.5, material_left))
-    world.add(Sphere(point3(np.array([-1.0, 0.0, -1.0])), -0.4, material_left))
+    world.add(Sphere(point3(np.array([-1.0, 0.0, -1.0])), -0.45, material_left))
     world.add(Sphere(point3(np.array([1.0, 0.0, -1.0])), 0.5, material_right))
 
     # Camera
-    cam = Camera()
+    cam = Camera(point3(np.array([-2, 2, 1])), point3(np.array([0, 0, -1])), Vec3(np.array([0, 1, 0])), 30.0, aspect_ratio)
 
     with open('image.ppm', 'w') as img:
         img.write('P3\n')

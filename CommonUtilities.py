@@ -5,6 +5,7 @@ from vec3Class import random_unit_vector
 from vec3Class import vec3_reflect
 from vec3Class import vec3_refract
 from vec3Class import Vec3
+from vec3Class import vec3_cross
 from vec3Class import vec3_dot
 from rayClass import Ray
 from hittableClass import Hittable
