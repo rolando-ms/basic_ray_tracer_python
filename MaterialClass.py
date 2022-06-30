@@ -56,6 +56,12 @@ class Dielectric(Material):
     def __init__(self, index_of_refraction: float):
         self.index_of_refraction = index_of_refraction
 
+    def reflectance(self, cosine: float, ref_idx: float) -> float:
+        # Schlick's approximation for reflectance
+        r0 = (1-ref_idx) / (1+ref_idx)
+        r0 = r0*r0
+        return r0 + (1-r0)*np.power(1-cosine, 5)
+
     def scatter(self, r_in: Ray, rec: HitRecord, attenuation: color, scattered: Ray) -> list[bool, color, Ray]:
         attenuation = color(np.ones(3))
         refraction_ratio = self.index_of_refraction
@@ -70,7 +76,7 @@ class Dielectric(Material):
         cannot_refract = refraction_ratio * sin_theta > 1.0
 
         direction = Vec3()
-        if cannot_refract:
+        if cannot_refract or self.reflectance(cos_theta, refraction_ratio) > np.random.rand():
             direction = vec3_reflect(unit_direction, rec.normal)
         else:
             direction = vec3_refract(unit_direction, rec.normal, refraction_ratio)

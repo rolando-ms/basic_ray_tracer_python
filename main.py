@@ -33,8 +33,8 @@ def main():
     aspect_ratio = 16.0/9
     img_width = 200
     img_height = int(img_width / aspect_ratio)
-    samples_per_pixel = 10
-    max_depth = 5
+    samples_per_pixel = 5
+    max_depth = 10
 
     # World
     world = HittableList()
@@ -47,6 +47,7 @@ def main():
     world.add(Sphere(point3(np.array([0.0, -100.5, -1.0])), 100.0, material_ground))
     world.add(Sphere(point3(np.array([0.0, 0.0, -1.0])), 0.5, material_center))
     world.add(Sphere(point3(np.array([-1.0, 0.0, -1.0])), 0.5, material_left))
+    world.add(Sphere(point3(np.array([-1.0, 0.0, -1.0])), -0.4, material_left))
     world.add(Sphere(point3(np.array([1.0, 0.0, -1.0])), 0.5, material_right))
 
     # Camera
