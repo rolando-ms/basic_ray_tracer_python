@@ -58,7 +58,12 @@ def main():
     world.add(Sphere(point3(np.array([1.0, 0.0, -1.0])), 0.5, material_right))
 
     # Camera
-    cam = Camera(point3(np.array([-2, 2, 1])), point3(np.array([0, 0, -1])), Vec3(np.array([0, 1, 0])), 30.0, aspect_ratio)
+    look_from = point3(np.array([-2, 2, 1]))
+    look_at = point3(np.array([0, 0, -1]))
+    vup = Vec3(np.array([0, 1, 0]))
+    dist_to_focus = (look_from - look_at).length()
+    aperture = 2.0
+    cam = Camera(look_from, look_at, vup, 30.0, aspect_ratio, aperture, dist_to_focus)
 
     with open('image.ppm', 'w') as img:
         img.write('P3\n')

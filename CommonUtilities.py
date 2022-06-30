@@ -1,5 +1,6 @@
 
 import numpy as np
+from vec3Class import random_in_unit_disk
 from vec3Class import random_in_unit_sphere
 from vec3Class import random_unit_vector
 from vec3Class import vec3_reflect
